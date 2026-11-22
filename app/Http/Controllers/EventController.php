@@ -57,4 +57,49 @@ class EventController extends Controller
             ->route('events.index')
             ->with('success', 'Event berhasil dibuat!');
     }
+
+
+    public function show(Event $event)
+    {
+        $event->load('category', 'organizer');
+
+        return view('events.show', compact('event'));
+    }
+
+
+    public function edit(Event $event)
+    {
+        $categories = Category::all();
+
+        return view('events.edit', compact('event', 'categories'));
+    }
+
+    public function update(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'description' => 'required|string',
+            'location' => 'required|string|max:255',
+            'start_at' => 'required|date',
+            'end_at' => 'required|date|after:start_at',
+            'registration_start_at' => 'required|date',
+            'registration_end_at' => 'required|date|after:registration_start_at|before_or_equal:start_at',
+            'capacity' => 'required|integer|min:1',
+        ]);
+
+        $event->update($validated);
+
+        return redirect()
+            ->route('events.show', $event->slug)
+            ->with('success', 'Event berhasil diperbarui!');
+    }
+
+
+    public function destroy(Event $event)
+    {
+        $event->delete();
+
+        return redirect()->route('events.index')->with('success', 'Event berhasil dihapus!');
+    }
 }
