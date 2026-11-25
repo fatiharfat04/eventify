@@ -15,6 +15,8 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.st
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.store');
 
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 
 Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
